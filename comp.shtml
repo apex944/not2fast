@@ -1,0 +1,599 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <script src="//archive.org/includes/analytics.js?v=cf34f82" type="text/javascript"></script>
+    <script type="text/javascript">window.addEventListener('DOMContentLoaded',function(){var v=archive_analytics.values;v.service='wb';v.server_name='wwwb-app227.us.archive.org';v.server_ms=710;archive_analytics.send_pageview({});});</script>
+    <script type="text/javascript" src="/_static/js/bundle-playback.js?v=36gO9Ebf" charset="utf-8"></script>
+    <script type="text/javascript" src="/_static/js/wombat.js?v=UHAOicsW" charset="utf-8"></script>
+    <script type="text/javascript">
+    __wm.init("https://web.archive.org/web");
+    __wm.wombat("http://www.not2fast.com:80/turbo/compression/compression.shtml","20200109125540","https://web.archive.org/","web","/_static/",
+	      "1578574540");
+</script>
+<link rel="stylesheet" type="text/css" href="/_static/css/banner-styles.css?v=fantwOh2" />
+<link rel="stylesheet" type="text/css" href="/_static/css/iconochive.css?v=qtvMKcIJ" />
+<!-- End Wayback Rewrite JS Include -->
+
+      <title>Bildon / Not2Fast: Compression Calculator</title>
+     <!-- <meta copyright="Copyright (c) 2003 by Eric Fahlgren"> -->
+            <link rel="shortcut icon" href="/web/20200109125540im_/http://www.not2fast.com/favicon.ico"/>
+      <link rel="stylesheet" type="text/css" href="/web/20200109125540cs_/http://www.not2fast.com/style/main.css"/>
+
+      <script language="JavaScript1.2">
+      //------------------------------------------------------------------------------
+
+      var fieldName = new Array();
+          fieldName[ 0] = 'nCylinders';    // Unitless
+
+          fieldName[ 1] = 'intakeClose';   // Angles
+
+          fieldName[ 2] = 'chordDepth1';   // Lengths
+          fieldName[ 3] = 'chordDepth2';
+          fieldName[ 4] = 'conRodLength';
+          fieldName[ 5] = 'cylinderBore';
+          fieldName[ 6] = 'cylinderStroke';
+          fieldName[ 7] = 'deckHeight';
+          fieldName[ 8] = 'gasketBore';
+          fieldName[ 9] = 'gasketThickness';
+          fieldName[10] = 'gearDiameter';
+          fieldName[11] = 'millingDepth';
+          fieldName[12] = 'pistonClearance';
+          fieldName[13] = 'spacerBore';
+          fieldName[14] = 'spacerThickness';
+          fieldName[15] = 'topRingHeight';
+
+          fieldName[16] = 'headVolume';    // Volumes
+          fieldName[17] = 'pistonVolume';
+
+
+         var mm2perCC = 1000.0;
+         var CCperCI  = 16.387064;
+         var MMperIN  = 25.4;
+         var DTOR     = 1.74532925199432957692369076849E-2; // PI / 180
+
+         function num(s) { return Number(eval(s.toLowerCase())); }
+
+         // NOTE: conversion functions must have lower case names for "num" above to work!
+
+         var mmCvt    = 1.0;
+         var inCvt    = MMperIN;
+
+         function mm  (l)  { return l / mmCvt; }
+         function inch(l)  { return l * inCvt; }
+         function len (l)  { return num(l) * mmCvt; }
+
+
+         var ccCvt    = 1.0;
+         var ciCvt    = CCperCI;
+
+         function cc  (v)  { return v / ccCvt; }
+         function ci  (v)  { return v * ciCvt; }
+         function vol (v)  { return num(v) * ccCvt; }
+
+         function setLength()
+         {
+            f = eval('document.calc');
+            if (f.lenUnits[0].checked) { // Millimeters
+               if (mmCvt == 1.0) return;
+               for (var i = 2; i <= 15; i++) {
+                  var f = eval('document.calc.'+fieldName[i]);
+                  f.value = Format(num(f.value)*MMperIN, 2);
+               }
+               inCvt = MMperIN;
+               mmCvt =  1.0;
+            }
+            else                       { // Inches
+               if (inCvt == 1.0) return;
+               for (var i = 2; i <= 15; i++) {
+                  var f = eval('document.calc.'+fieldName[i]);
+                  f.value = Format(num(f.value)/MMperIN, 4);
+               }
+               inCvt =  1.0;
+               mmCvt = MMperIN;
+            }
+         }
+
+         function setVolume()
+         {
+            f = eval('document.calc');
+            if (f.volUnits[0].checked) { // cc
+               if (ccCvt == 1.0) return;
+               for (var i = 16; i <= 17; i++) {
+                  var f = eval('document.calc.'+fieldName[i]);
+                  f.value = Format(num(f.value)*CCperCI, 2);
+               }
+               ccCvt = 1.0;
+               ciCvt = CCperCI;
+            }
+            else                       { // in^3
+               if (ciCvt == 1.0) return;
+               for (var i = 16; i <= 17; i++) {
+                  var f = eval('document.calc.'+fieldName[i]);
+                  f.value = Format(num(f.value)/CCperCI, 3);
+               }
+               ccCvt = CCperCI;
+               ciCvt = 1.0;
+            }
+         }
+
+         function Deg(R)   { return R / DTOR; }
+
+      //------------------------------------------------------------------------------
+         function Format(n, decimals)
+         {
+            if (decimals < 0) decimals = 0;
+            n *= Math.pow(10, decimals);
+            n  = Math.round(n);
+            s  = n.toString();
+            if (decimals > 0) {
+               while (s.length < decimals) s = '0' + s;
+               var lhs = s.substr(0, s.length-decimals);
+               if (lhs == '-') lhs = '-0';
+               if (lhs == '' ) lhs =  '0';
+               var rhs = s.substr(s.length-decimals, decimals);
+               s = lhs + '.' + rhs;
+            }
+            return s;
+         }
+
+      //------------------------------------------------------------------------------
+
+         function area(bore)
+         {
+            return Math.PI * Math.pow((bore/2), 2);
+         }
+
+         function volume(bore, stroke)
+         {
+            return area(bore) * stroke;
+         }
+
+         function chordArea(bore, H)
+         {
+            var R     = bore/2.0;
+            var alpha = Math.acos((R-H) / R);
+            return alpha * Math.pow(R, 2) - Math.sin(alpha) * R * (R-H);
+         }
+
+      //------------------------------------------------------------------------------
+
+         var argv = new Array();
+         var argc = 0;
+
+         function parseArgs()
+         {
+            var  params = location.search.substring(1);
+            var  start  = 0;
+            while (1) {
+               var equPos = params.indexOf('=', start);
+               if (equPos < 0) break;
+               var name   = params.substring(start, equPos);
+               var ampPos = params.indexOf('&', equPos);
+               if (ampPos < 0) ampPos = params.length;
+               var value  = params.substring(equPos+1, ampPos);
+               argv[name] = value;
+               argc++;
+
+               start = ampPos + 1;
+            }
+         }
+
+         function loadOne(name)
+         {
+            f = eval('document.calc.'+name);
+            if (argv[name]) f.value = argv[name];
+         }
+
+         function zeroOne(name)
+         {
+            f = eval('document.calc.'+name);
+            f.value = 0;
+         }
+
+         function loadParams()
+         {
+            parseArgs();
+
+            for (var i = 0; i <= 17; i++) {
+               loadOne(fieldName[i]);
+            }
+
+            if (argc > 0) compute();
+         }
+
+      //------------------------------------------------------------------------------
+
+         function compute()
+         {
+            f = eval('document.calc');
+
+            //------------------------------------------------------------------------
+            //--  Compute the nominal engine configuration.  -------------------------
+
+            var cylinderBore         = len(f.cylinderBore.value);
+            var cylinderStroke       = len(f.cylinderStroke.value);
+            var pistonClearance      = len(f.pistonClearance.value);
+            var topRingHeight        = len(f.topRingHeight.value);
+            var nCylinders           = num(f.nCylinders.value);
+            var headVolume           = vol(f.headVolume.value);
+            var pistonVolume         = vol(f.pistonVolume.value);
+            var gasketBore           = len(f.gasketBore.value);
+            var gasketThickness      = len(f.gasketThickness.value);
+            var deckHeight           = len(f.deckHeight.value);
+
+            var cylinderVolume       = volume(cylinderBore, cylinderStroke) / mm2perCC;
+            var engineVolumeCC       = nCylinders * cylinderVolume;
+            var engineVolumeCID      = engineVolumeCC / 16.38;
+
+            var deckVolume           = volume(cylinderBore, deckHeight) / mm2perCC;
+            var pistonClearanceVolume= (volume(cylinderBore, topRingHeight) - volume(cylinderBore-pistonClearance, topRingHeight)) / mm2perCC;
+            var gasketVolume         = volume(gasketBore, gasketThickness) / mm2perCC;
+            var chamberVolume        = headVolume + gasketVolume + deckVolume + pistonVolume + pistonClearanceVolume;
+            var nominalSCR           = (chamberVolume + cylinderVolume) / chamberVolume;
+
+            f.cylinderVolume.value   = Format(cylinderVolume,  1);
+            f.chamberVolume.value    = Format(chamberVolume,   1);
+            f.nominalSCR.value       = Format(nominalSCR,      2);
+            f.engineVolumeCC.value   = Format(engineVolumeCC,  0);
+            f.engineVolumeCID.value  = Format(engineVolumeCID, 0);
+
+            //------------------------------------------------------------------------
+            //--  Trapped CR calcs.  -------------------------------------------------
+
+            var theta                = num(f.intakeClose.value);
+            var rodLength            = len(f.conRodLength.value);
+
+            if (theta < 0.0) theta = 0.0;
+            var rTheta = theta * DTOR;
+
+            var R                   = cylinderStroke / 2;
+            var crankPinFromBDC     = R * (1.0 - Math.cos(rTheta));
+            var crankPinFromCL      = R * Math.sin(rTheta); // Horizontal displacement of crank pin from center line
+            var pistonFromBDC       = crankPinFromBDC - (rodLength - Math.sqrt(Math.pow(rodLength, 2) - Math.pow(crankPinFromCL, 2)));
+            var portionOfStroke     = 1.0 - (pistonFromBDC / cylinderStroke); // Portion left to do compression.
+            var nominalTCR          = (chamberVolume + portionOfStroke * cylinderVolume) / chamberVolume;
+
+            f.nominalTCR.value       = Format(nominalTCR,      2);
+
+            //------------------------------------------------------------------------
+
+            var millingDepth         = len(f.millingDepth.value);
+            var chordDepth1          = len(f.chordDepth1.value);
+            var chordDepth2          = len(f.chordDepth2.value);
+            var spacerThickness      = len(f.spacerThickness.value);
+            var spacerBore           = len(f.spacerBore.value);
+            var gearDiameter         = len(f.gearDiameter.value);
+
+            var chordArea1           = chordArea(cylinderBore, chordDepth1);
+            var chordArea2           = chordArea(cylinderBore, chordDepth2);
+            var millingVolume        = (area(cylinderBore) - chordArea1 - chordArea2) * millingDepth / mm2perCC;
+            var spacerVolume         = volume(spacerBore, spacerThickness) / mm2perCC;
+            var chamberReduction     = spacerVolume - millingVolume;
+            var newChamberVolume     = chamberVolume + chamberReduction;
+            var resultingSCR         = (newChamberVolume + cylinderVolume) / newChamberVolume;
+            var resultingTCR         = (newChamberVolume + portionOfStroke * cylinderVolume) / newChamberVolume;
+            var camError             = gearDiameter <= 0.0 ? 0.0 : Deg(Math.sin((spacerThickness-millingDepth)/(gearDiameter/2)));
+
+            f.chamberReduction.value = Format(chamberReduction, 2);
+            f.newChamberVolume.value = Format(newChamberVolume, 1);
+            f.resultingSCR.value     = Format(resultingSCR,     2);
+            f.resultingTCR.value     = Format(resultingTCR,     2);
+            f.camError.value         = Format(camError,         2);
+         }
+
+      //------------------------------------------------------------------------------
+      </script>
+   </head>
+
+   <body onload="loadParams()"><!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<style type="text/css">
+body {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  /*min-width:800px !important;*/
+}
+</style>
+<script>__wm.rw(0);</script>
+<div id="wm-ipp-base" lang="en" style="display:none;direction:ltr;">
+<div id="wm-ipp" style="position:fixed;left:0;top:0;right:0;">
+<div id="donato" style="position:relative;width:100%;">
+  <div id="donato-base">
+    <iframe id="donato-if" src="https://archive.org/includes/donate.php?as_page=1&amp;platform=wb&amp;referer=https%3A//web.archive.org/web/20200109125540/http%3A//www.not2fast.com/turbo/compression/compression.shtml"
+	    scrolling="no" frameborder="0" style="width:100%; height:100%">
+    </iframe>
+  </div>
+</div><div id="wm-ipp-inside">
+  <div id="wm-toolbar" style="position:relative;display:flex;flex-flow:row nowrap;justify-content:space-between;">
+    <div id="wm-logo" style="/*width:110px;*/padding-top:12px;">
+      <a href="/web/" title="Wayback Machine home page"><img src="/_static/images/toolbar/wayback-toolbar-logo-200.png" srcset="/_static/images/toolbar/wayback-toolbar-logo-100.png, /_static/images/toolbar/wayback-toolbar-logo-150.png 1.5x, /_static/images/toolbar/wayback-toolbar-logo-200.png 2x" alt="Wayback Machine" style="width:100px" border="0" /></a>
+    </div>
+    <div class="c" style="display:flex;flex-flow:column nowrap;justify-content:space-between;flex:1;">
+      <form class="u" style="display:flex;flex-direction:row;flex-wrap:nowrap;" target="_top" method="get" action="/web/submit" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="http://www.not2fast.com/turbo/compression/compression.shtml" onfocus="this.focus();this.select();" style="flex:1;"/><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20200109125540" /><input type="submit" value="Go" />
+      </form>
+      <div style="display:flex;flex-flow:row nowrap;align-items:flex-end;">
+		<div class="s" id="wm-nav-captures">
+	  	  <a class="t" href="/web/20200109125540*/http://www.not2fast.com/turbo/compression/compression.shtml" title="See a list of every capture for this URL">46 captures</a>
+	  <div class="r" title="Timespan for captures of this URL">09 Jul 2004 - 03 Apr 2020</div>
+	  </div>
+	<div class="k" style="flex:1;">
+	  <a href="" id="wm-graph-anchor">
+	    <div id="wm-ipp-sparkline" title="Explore captures for this URL" style="position: relative">
+	      <canvas id="wm-sparkline-canvas" width="675" height="27" border="0"></canvas>
+	    </div>
+	  </a>
+	</div>
+      </div>
+    </div>
+    <div class="n">
+      <table>
+	<tbody>
+	  <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+	  <tr class="m">
+	    <td class="b" nowrap="nowrap"><a href="https://web.archive.org/web/20191107155254/http://www.not2fast.com:80/turbo/compression/compression.shtml" title="07 Nov 2019"><strong>Nov</strong></a></td>
+	    <td class="c" id="displayMonthEl" title="You are here: 12:55:40 Jan 09, 2020">JAN</td>
+	    <td class="f" nowrap="nowrap"><a href="https://web.archive.org/web/20200403172235/http://www.not2fast.com/turbo/compression/compression.shtml" title="03 Apr 2020"><strong>Apr</strong></a></td>
+	  </tr>
+	  <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+	  <tr class="d">
+	    <td class="b" nowrap="nowrap"><a href="https://web.archive.org/web/20191107155254/http://www.not2fast.com:80/turbo/compression/compression.shtml" title="15:52:54 Nov 07, 2019"><img src="/_static/images/toolbar/wm_tb_prv_on.png" alt="Previous capture" width="14" height="16" border="0" /></a></td>
+	    <td class="c" id="displayDayEl" style="width:34px;font-size:22px;white-space:nowrap;" title="You are here: 12:55:40 Jan 09, 2020">09</td>
+	    <td class="f" nowrap="nowrap"><a href="https://web.archive.org/web/20200403172235/http://www.not2fast.com/turbo/compression/compression.shtml" title="17:22:35 Apr 03, 2020"><img src="/_static/images/toolbar/wm_tb_nxt_on.png" alt="Next capture" width="14" height="16" border="0" /></a></td>
+	  </tr>
+	  <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+	  <tr class="y">
+	    <td class="b" nowrap="nowrap"><a href="https://web.archive.org/web/20181018044106/http://www.not2fast.com:80/turbo/compression/compression.shtml" title="18 Oct 2018"><strong>2018</strong></a></td>
+	    <td class="c" id="displayYearEl" title="You are here: 12:55:40 Jan 09, 2020">2020</td>
+	    <td class="f" nowrap="nowrap">2021</td>
+	  </tr>
+	</tbody>
+      </table>
+    </div>
+    <div class="r" style="display:flex;flex-flow:column nowrap;align-items:flex-end;justify-content:space-between;">
+      <div id="wm-btns" style="text-align:right;height:23px;">
+        	<span class="xxs">
+          <div id="wm-save-snapshot-success">success</div>
+          <div id="wm-save-snapshot-fail">fail</div>
+          <a id="wm-save-snapshot-open" href="#"
+	     title="Share via My Web Archive" >
+            <span class="iconochive-web"></span>
+          </a>
+          <a href="https://archive.org/account/login.php" title="Sign In" id="wm-sign-in">
+            <span class="iconochive-person"></span>
+          </a>
+          <span id="wm-save-snapshot-in-progress" class="iconochive-web"></span>
+	</span>
+        	<a class="xxs" href="http://faq.web.archive.org/" title="Get some help using the Wayback Machine" style="top:-6px;"><span class="iconochive-question" style="color:rgb(87,186,244);font-size:160%;"></span></a>
+	<a id="wm-tb-close" href="#close" style="top:-2px;" title="Close the toolbar"><span class="iconochive-remove-circle" style="color:#888888;font-size:240%;"></span></a>
+      </div>
+      <div id="wm-share" class="xxs">
+        <a href="/web/20200109125540/http://web.archive.org/screenshot/http://www.not2fast.com/turbo/compression/compression.shtml"
+           id="wm-screenshot"
+           title="screenshot">
+          <span class="wm-icon-screen-shot"></span>
+        </a>
+        <a href="#" id="wm-video" title="video">
+          <span class="iconochive-movies"></span>
+        </a>
+	<a id="wm-share-facebook" href="#" data-url="https://web.archive.org/web/20200109125540/http://www.not2fast.com:80/turbo/compression/compression.shtml" title="Share on Facebook" style="margin-right:5px;" target="_blank"><span class="iconochive-facebook" style="color:#3b5998;font-size:160%;"></span></a>
+	<a id="wm-share-twitter" href="#" data-url="https://web.archive.org/web/20200109125540/http://www.not2fast.com:80/turbo/compression/compression.shtml" title="Share on Twitter" style="margin-right:5px;" target="_blank"><span class="iconochive-twitter" style="color:#1dcaff;font-size:160%;"></span></a>
+      </div>
+      <div style="padding-right:2px;text-align:right;white-space:nowrap;">
+	<a id="wm-expand" class="wm-btn wm-closed" href="#expand" onclick="__wm.ex(event);return false;"><span id="wm-expand-icon" class="iconochive-down-solid"></span> <span class="xxs" style="font-size:80%;">About this capture</span></a>
+      </div>
+    </div>
+  </div>
+    <div id="wm-capinfo" style="border-top:1px solid #777;display:none; overflow: hidden">
+                    <div id="wm-capinfo-collected-by">
+    <div style="background-color:#666;color:#fff;font-weight:bold;text-align:center">COLLECTED BY</div>
+    <div style="padding:3px;position:relative" id="wm-collected-by-content">
+            <div style="display:inline-block;vertical-align:top;width:50%;">
+			<span class="c-logo" style="background-image:url(https://archive.org/services/img/alexacrawls);"></span>
+		Organization: <a style="color:#33f;" href="https://archive.org/details/alexacrawls" target="_new"><span class="wm-title">Alexa Crawls</span></a>
+		<div style="max-height:75px;overflow:hidden;position:relative;">
+	  <div style="position:absolute;top:0;left:0;width:100%;height:75px;background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 90%,rgba(255,255,255,255) 100%);"></div>
+	  Starting in 1996, <a href="http://www.alexa.com/">Alexa Internet</a> has been donating their crawl data to the Internet Archive.  Flowing in every day, these data are added to the <a href="http://web.archive.org/">Wayback Machine</a> after an embargo period.
+	</div>
+	      </div>
+      <div style="display:inline-block;vertical-align:top;width:49%;">
+			<span class="c-logo" style="background-image:url(https://archive.org/services/img/alexacrawls)"></span>
+		<div>Collection: <a style="color:#33f;" href="https://archive.org/details/alexacrawls" target="_new"><span class="wm-title">Alexa Crawls</span></a></div>
+		<div style="max-height:75px;overflow:hidden;position:relative;">
+	  <div style="position:absolute;top:0;left:0;width:100%;height:75px;background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 90%,rgba(255,255,255,255) 100%);"></div>
+	  Starting in 1996, <a href="http://www.alexa.com/">Alexa Internet</a> has been donating their crawl data to the Internet Archive.  Flowing in every day, these data are added to the <a href="http://web.archive.org/">Wayback Machine</a> after an embargo period.
+	</div>
+	      </div>
+    </div>
+    </div>
+    <div id="wm-capinfo-timestamps">
+    <div style="background-color:#666;color:#fff;font-weight:bold;text-align:center" title="Timestamps for the elements of this page">TIMESTAMPS</div>
+    <div>
+      <div id="wm-capresources" style="margin:0 5px 5px 5px;max-height:250px;overflow-y:scroll !important"></div>
+      <div id="wm-capresources-loading" style="text-align:left;margin:0 20px 5px 5px;display:none"><img src="/_static/images/loading.gif" alt="loading" /></div>
+    </div>
+    </div>
+  </div></div></div></div><div id="wm-ipp-print">The Wayback Machine - https://web.archive.org/web/20200109125540/http://www.not2fast.com:80/turbo/compression/compression.shtml</div>
+<script type="text/javascript">
+__wm.bt(675,27,25,2,"web","http://www.not2fast.com/turbo/compression/compression.shtml","20200109125540",1996,"/_static/",["/_static/css/banner-styles.css?v=fantwOh2","/_static/css/iconochive.css?v=qtvMKcIJ"], false);
+  __wm.rw(1);
+</script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+      <div id="titleBox">
+         <a href="/web/20200109125540/http://www.not2fast.com/"><img class="logo" src="/web/20200109125540im_/http://www.not2fast.com/images/not2fast.jpg"/></a>
+         <div id="titleText">Compression Ratio Calculator
+            <div id="titleCopy">Copyright &copy; 2003 <a href="https://web.archive.org/web/20200109125540/mailto:eric@wryday.com?subject=Compression%20Ratio%20Calculator">Eric Fahlgren</a></div>
+         </div>
+         <div id="titleDate"> Last updated 2007-09-18 11:17 PDT</div>
+      </div>
+
+      <h2>Calculator</h2>
+      <div id="cbox">
+
+         <p> This calculator lets you mess with milling depths and copper
+         spacers and all that to see how they will affect compression ratio
+         and cam timing.  See the notes at the bottom for interpretation
+         of the field values.  The fields are primed with standard values
+         for a VW 1.8 8v motor with 10:1 CR. </p>
+
+
+         <center>
+         <form name="calc">
+         <table border="0" cellspacing="0" cellpadding="2" width="90%">
+
+            <tr><th align="left" valign="center" height="30" colspan="6">Units</th></tr>
+            <tr><td>Length </td>
+                <td colspan="5"><input type="radio" value="radio" name="lenUnits" checked onclick="setLength()">&nbsp;millimeters&nbsp;<input type="radio" value="radio" name="lenUnits" onclick="setLength()">&nbsp;inches </td></tr>
+<!--
+            <tr><td>Volume </td>
+                <td colspan="5"><input type="radio"  value="radio" name="volUnits"   checked   onClick="setVolume()">&nbsp;cc &nbsp;<input type="radio"  value="radio" name="volUnits"             onClick="setVolume()">&nbsp;inch<sup>3</sup></td></tr>
+-->
+            </td><td>&nbsp;</td></tr>
+
+            <tr><th align="left" valign="center" height="30" colspan="6">Engine Parameters</th></tr>
+            <tr><td>Cylinder Bore</td><td><input type="text" size="10" name="cylinderBore" value="81.0" onchange="compute()"/></td><td>len</td>
+                <td>Cylinder Stroke</td><td><input type="text" size="10" name="cylinderStroke" value="86.4" onchange="compute()"/></td><td>len</td></tr>
+             <tr><td>Connecting Rod Length <a href="#trapped">(2)</a></td><td><input type="text" size="10" name="conRodLength" value="144.0" onchange="compute()"/></td><td>len</td>
+                 <td>Intake Close ABDC <a href="#trapped">(2)</a></td><td><input type="text" size="10" name="intakeClose" value="50" onchange="compute()"/></td><td>deg</td></tr>
+            <tr><td>Gasket Bore</td><td><input type="text" size="10" name="gasketBore" value="82.5" onchange="compute()"/></td><td>len</td>
+                <td>Gasket Thickness</td><td><input type="text" size="10" name="gasketThickness" value="Inch(0.071)" onchange="compute()"/></td><td>len</td></tr>
+            <tr><td>Piston Clearance <a href="#clearance">(3)</a></td><td><input type="text" size="10" name="pistonClearance" value="Inch(0.0015)" onchange="compute()"/></td><td>len</td>
+                <td>Top Ring Height <a href="#clearance">(3)</a></td><td><input type="text" size="10" name="topRingHeight" value="10" onchange="compute()"/></td><td>len</td></tr>
+            <tr><td>Cylinders</td><td><input type="text" size="10" name="nCylinders" value="4" onchange="compute()"/></td><td>len</td>
+                <td>Deck Height</td><td><input type="text" size="10" name="deckHeight" value="0.0" onchange="compute()"/></td><td>len</td></tr>
+            <tr><td>Head Chamber Volume</td><td><input type="text" size="10" name="headVolume" value="30" onchange="compute()"/></td><td>cc</td>
+                <td colspan="2">
+               <select name="headOptions" onchange="calc.headVolume.value = calc.headOptions.options[calc.headOptions.selectedIndex].value; compute()">
+                  <option value="" selected> Unselected</option>
+                  <option value="30"> VW 1.8 8v 30 cc </option>
+                  <option value="30"> VW 2.0 8v 30 cc </option>
+                  <option value="45"> VW 1.8 16v 45 cc </option>
+                  <option value="45"> VW 1.8 20v 45 cc </option>
+                  <option value="30"> Audi MC 30 cc </option>
+               </select>
+            </td><td>&nbsp;</td></tr>
+            <tr><td>Piston Dish Volume <a href="#dish">(4)</a> </td><td><input type="text" size="10" name="pistonVolume" value="10" onchange="compute()"/></td><td>cc</td>
+                <td colspan="2">
+               <select name="dishOptions" onchange="calc.pistonVolume.value = calc.dishOptions.options[calc.dishOptions.selectedIndex].value; compute()">
+                  <option value="" selected> Unselected</option>
+                  <option value="10"> VW 1.8  8v 10:1 10 cc </option>
+                  <option value="-5"> VW 1.8 16v 10:1 -5 cc </option>
+                  <option value="16"> VW 2.0  8v 10:1 16 cc </option>
+                  <option value="20.5"> Audi MC   8.4:1 20.5 cc </option>
+                  <option value="26"> Audi MC   7.8:1 26 cc </option>
+               </select>
+            </td><td>&nbsp;</td></tr>
+            <tr class="res"><td>Cylinder Volume</td><td><input type="text" size="10" name="cylinderVolume" value="" onfocus="this.blur()"/></td><td>cc</td>
+                            <td>Total Chamber Volume</td><td><input type="text" size="10" name="chamberVolume" value="" onfocus="this.blur()"/></td><td>cc</td></tr>
+            <tr class="res"><td>Nominal Static CR</td><td><input type="text" size="10" name="nominalSCR" value="" onfocus="this.blur()"/></td><td>:1</td>
+                            <td>Nominal Trapped CR</td><td><input type="text" size="10" name="nominalTCR" value="" onfocus="this.blur()"/></td><td>:1</td></tr>
+            <tr class="res"><td>Displacement</td><td><input type="text" size="10" name="engineVolumeCC" value="" onfocus="this.blur()"/></td><td>cc</td>
+                            <td>Displacement</td><td><input type="text" size="10" name="engineVolumeCID" value="" onfocus="this.blur()"/></td><td>CID</td></tr>
+            <tr><td colspan="6"><font size="-4">&nbsp;</font></td></tr>
+            <tr><th align="left" valign="center" height="30" colspan="6">Change CR</th></tr>
+            <tr><td>Milling Depth</td><td><input type="text" size="10" name="millingDepth" value="0" onchange="compute()"/></td><td>len</td>
+                <td>Cam Gear Pitch Diameter <a href="#gear">(5)</a></td><td><input type="text" size="10" name="gearDiameter" value="132" onchange="compute()"/></td><td>len</td></tr>
+            <tr><td>Chord Depth 1 <a href="#chords">(6)</a></td><td><input type="text" size="10" name="chordDepth1" value="8" onchange="compute()"/></td><td>len</td>
+                <td>Chord Depth 2 <a href="#chords">(6)</a></td><td><input type="text" size="10" name="chordDepth2" value="11" onchange="compute()"/></td><td>len</td></tr>
+            <tr><td>Spacer Thickness <a href="#spacer">(7)</a></td><td><input type="text" size="10" name="spacerThickness" value="0" onchange="compute()"/></td><td>len</td>
+                <td>Spacer Bore <a href="#spacer">(7)</a></td><td><input type="text" size="10" name="spacerBore" value="82.5" onchange="compute()"/></td><td>len</td></tr>
+            <tr class="res"><td>Chamber Volume Change</td><td><input type="text" size="10" name="chamberReduction" value="" onfocus="this.blur()"/></td><td>cc</td>
+                            <td>New Chamber Volume</td><td><input type="text" size="10" name="newChamberVolume" value="" onfocus="this.blur()"/></td><td>cc</td></tr>
+            <tr class="res"><td>Resulting Static CR</td><td><input type="text" size="10" name="resultingSCR" value="" onfocus="this.blur()"/></td><td>:1</td>
+                            <td>Resulting Trapped CR <a href="#resultingTrapped">(8)</a></td><td><input type="text" size="10" name="resultingTCR" value="" onfocus="this.blur()"/></td><td>:1</td></tr>
+            <tr class="res"><td>Cam Timing Error</td><td><input type="text" size="10" name="camError" value="" onfocus="this.blur()"/></td><td>deg</td>
+                            <td>&nbsp;</td> <td>&nbsp;</td> <td>&nbsp;</td></tr>
+            <tr><td colspan="6"><font size="-4">&nbsp;</font></td></tr>
+            <tr><td colspan="6"><center><input type="button" value="Calculate" onclick="compute(this.form)"/></center></td></tr>
+         </table>
+         </form>
+         </center>
+      </div>
+
+      <h2>Notes</h2>
+      <div id="cbox">
+         <ol>
+            <li> <p> Use the Inch function, as in "Inch(0.040)", to enter values
+            in inches.  You can enter expressions with arithmetic operators
+            into the fields, they will be evaluated properly.  For example,
+            enter "80.5+Inch(0.020)" into bore for an 80.5 mm bore with a 20
+            thousandths overbore. </p> </li>
+
+            <li> <a name="trapped"></a> <p> Connecting rod length and intake
+            valve closing are used to compute trapped compression, i.e., how
+            much of the stroke is really used to compress the intake charge.
+            (Trapped CR is often called "dynamic CR," but the use of
+            "dynamic" is completely incorrect, this measure is static and
+            is a result of engine geometry and not its dynamic behavior;
+            a true dynamic compression ratio would take into account the
+            VE, gas flows and resonances in the system to determine the
+            "swept volume.")  </p> </li>
+
+            <li> <a name="clearance"></a> <p> Piston clearance and top ring
+            height are used to compute the volume of the space between
+            the piston and cylinder bore, above the top ring and below
+            the piston face.  People usually ignore this volume, but it
+            is very significant at higher compression ratios. </p> </li>
+
+            <li> <a name="dish"></a> <p> Piston dish is negative if you
+            have a "domed" piston.  Deck height is the amount of block
+            above the top of the piston.  If the piston pops out of the
+            hole, then use a negative deck value. <p> </li>
+
+            <li> <a name="gear"></a> <p> The cam gear pitch diameter allows me to compute the change
+            in angle of the gear produced at a given change in head height
+            (due to milling or spacers).  For an 8V VW, the gear is 132 mm
+            in diameter. </p>
+
+            <p>A negative value indicates that cam timing is retarded, a
+            positive value means it will be advanced.  (As you mill the head,
+            you have to "take up the slack" by turning the gear backwards,
+            i.e., retarding it.) </p> </li>
+
+            <li> <a name="chords"></a> <p> Milling to a negative
+            depth is different from adding a spacer in that the milling
+            computations allow for a non-circular section to be removed.
+            (Milling and spacing will be the same if you enter zeros in
+            the chord depths.)</p>
+
+            <p>When the shape of the combustion chamber at the milling
+            surface is not circular, you can approximate its shape by
+            cutting one or two chords from the chamber.  For an 8V VW
+            engine, these chords are 8 and 11 mm.  This image shows how
+            to measure the chord depths: </p>
+
+            <center><img src="/web/20200109125540im_/http://www.not2fast.com/turbo/compression/chord.gif" style="margin-bottom: 1em"/></center>
+
+            </li>
+
+            <li> <a name="spacer"></a> <p> Spacer thickness should be the
+            <i>difference</i> between the entered gasket value and the new
+            head position.  For instance, if you are <i>replacing</i> a
+            0.070&quot; gasket with a 0.125&quot; spacer, you would enter
+            "Inch(0.125-0.070)" in the "Spacer Thickness" field. </p>
+
+            <p> Alternatively, you could set the gasket thickness to zero
+            (modifying the nominal CR) and set the spacer thickness to
+            whatever you are installing.  <b> But!  Be aware that if you set
+            the gasket thickness to zero, then the cam error computations
+            will be wrong! </b>  Cam error uses all the "Engine Parameters"
+            dimensions to compute a zero error value, then computes stack
+            height difference from the nominal position using the "Change
+            CR" values. </p>
+
+            </li>
+
+            <li> <a name="resultingTrapped"></a> <p> The resulting trapped
+            CR is calculated using original cam timing, not the new cam
+            timing with the error term. </p>
+            </li>
+
+         </ol>
+
+      </div>
+
+      <div style="height: 50em;"> &nbsp; </div>
+
+   </body>
+</html>
+
